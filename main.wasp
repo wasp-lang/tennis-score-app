@@ -1,0 +1,68 @@
+app tennisScoreApp {
+  wasp: {
+    version: "^0.16.0"
+  },
+  title: "tennis-score-app",
+
+  auth: {
+    userEntity: User,
+    methods: {
+      google: {},
+    },
+    onAuthFailedRedirectTo: "/login",
+  },
+  client: {
+    rootComponent: import { App } from "@src/App",
+  }
+}
+
+query getMatches {
+  fn: import { getMatches } from "@src/matches/operations",
+  entities: [Match, Set]
+}
+
+query getMatch {
+  fn: import { getMatch } from "@src/matches/operations",
+  entities: [Match, Set]
+}
+
+action createMatch {
+  fn: import { createMatch } from "@src/matches/operations",
+  entities: [Match]
+}
+
+action updateScore {
+  fn: import { updateScore } from "@src/matches/operations",
+  entities: [Match, Set]
+}
+
+
+// Routes
+route RootRoute { path: "/", to: IndexPage }
+page IndexPage {
+  component: import { IndexPage } from "@src/matches/IndexPage"
+}
+
+route NewMatchRoute { path: "/new", to: NewMatchPage }
+page NewMatchPage {
+  component: import { NewMatchPage } from "@src/matches/NewMatchPage",
+  authRequired: true
+}
+
+route MatchScoreRoute { path: "/match/:matchId", to: MatchScorePage }
+page MatchScorePage {
+  component: import { MatchScorePage } from "@src/matches/MatchScorePage",
+  authRequired: true
+}
+
+route LoginRoute { path: "/login", to: LoginPage }
+page LoginPage {
+  component: import { LoginPage } from "@src/auth/LoginPage"
+}
+
+route SignupRoute { path: "/signup", to: SignupPage }
+page SignupPage {
+  component: import { SignupPage } from "@src/auth/SignupPage"
+}
+
+

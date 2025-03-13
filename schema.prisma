@@ -1,0 +1,49 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id      String  @id @default(cuid())
+  matches Match[] @relation("CreatedBy")
+}
+
+model Match {
+  id         String   @id @default(uuid())
+  createdAt  DateTime @default(now())
+  isComplete Boolean  @default(false)
+  currentSet Int      @default(1)
+  server     Int      @default(1)
+
+  // Relations
+  createdBy   User   @relation("CreatedBy", fields: [createdById], references: [id])
+  createdById String
+
+  // Player details
+  player1Name String
+  player2Name String
+
+  // Current score
+  player1Points String @default("0")
+  player2Points String @default("0")
+  player1Games  Int    @default(0)
+  player2Games  Int    @default(0)
+
+  // Set history
+  sets Set[]
+}
+
+model Set {
+  id           String @id @default(uuid())
+  setNumber    Int
+  player1Games Int
+  player2Games Int
+
+  // Relations
+  match   Match  @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  matchId String
+}
