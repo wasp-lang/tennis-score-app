@@ -84,6 +84,16 @@ export const createMatch = (async (rawArgs, context) => {
         player2Name,
         isPublic,
         createdBy: { connect: { id: context.user.id } },
+        score: {
+          player1: {
+            points: "0",
+            games: 0,
+          },
+          player2: {
+            points: "0",
+            games: 0,
+          },
+        },
       },
       include: {
         sets: true,
@@ -142,6 +152,17 @@ export const updateScore = (async (rawArgs, context) => {
         player2Points: newState.player2Points,
         player1Games: newState.player1Games,
         player2Games: newState.player2Games,
+        // Step 1, write to both locations
+        score: {
+          player1: {
+            points: newState.player1Points,
+            games: newState.player1Games,
+          },
+          player2: {
+            points: newState.player2Points,
+            games: newState.player2Games,
+          },
+        },
         currentSet: newState.currentSet,
         isComplete: newState.isComplete,
         server: newState.server,

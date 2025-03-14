@@ -41,8 +41,6 @@ action updateMatchVisibility {
   entities: [Match]
 }
 
-
-// Routes
 route RootRoute { path: "/", to: IndexPage }
 page IndexPage {
   component: import { IndexPage } from "@src/matches/IndexPage"
@@ -70,4 +68,9 @@ page SignupPage {
   component: import { SignupPage } from "@src/auth/SignupPage"
 }
 
-
+// Migrate from the old schema to the new one
+api migrateToNewSchemaApi {
+  httpRoute: (GET, "/migrate-to-new-schema"),
+  fn: import { migrateToNewSchema } from "@src/migrateToNewSchema",
+  entities: [Match]
+}
