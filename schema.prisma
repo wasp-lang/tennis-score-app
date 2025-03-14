@@ -28,12 +28,6 @@ model Match {
   player1Name String
   player2Name String
 
-  player1Points String @default("0")
-  player2Points String @default("0")
-  player1Games  Int    @default(0)
-  player2Games  Int    @default(0)
-
-  // Make it optional for now
   score Json
 
   // Set history

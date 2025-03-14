@@ -148,11 +148,6 @@ export const updateScore = (async (rawArgs, context) => {
     const updatedMatch = await context.entities.Match.update({
       where: { id: matchId },
       data: {
-        player1Points: newState.player1Points,
-        player2Points: newState.player2Points,
-        player1Games: newState.player1Games,
-        player2Games: newState.player2Games,
-        // Step 1, write to both locations
         score: {
           player1: {
             points: newState.player1Points,

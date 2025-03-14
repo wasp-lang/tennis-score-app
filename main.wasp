@@ -67,10 +67,3 @@ route SignupRoute { path: "/signup", to: SignupPage }
 page SignupPage {
   component: import { SignupPage } from "@src/auth/SignupPage"
 }
-
-// Migrate from the old schema to the new one
-api migrateToNewSchemaApi {
-  httpRoute: (GET, "/migrate-to-new-schema"),
-  fn: import { migrateToNewSchema } from "@src/migrateToNewSchema",
-  entities: [Match]
-}
