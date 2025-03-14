@@ -236,6 +236,11 @@ export const updateMatchVisibility = (async (rawArgs, context) => {
 
 // Helper functions
 function formatMatchResponse(match: Match & { sets: Set[] }) {
+  // Step 2, read from new location
+  const score = match.score as {
+    player1: { points: string; games: number };
+    player2: { points: string; games: number };
+  };
   return {
     id: match.id,
     createdAt: match.createdAt.getTime(),
@@ -246,14 +251,14 @@ function formatMatchResponse(match: Match & { sets: Set[] }) {
     createdBy: match.createdById,
     player1: {
       name: match.player1Name,
-      points: match.player1Points,
-      games: match.player1Games,
+      points: score.player1.points,
+      games: score.player1.games,
       sets: match.sets.map((set) => set.player1Games),
     },
     player2: {
       name: match.player2Name,
-      points: match.player2Points,
-      games: match.player2Games,
+      points: score.player2.points,
+      games: score.player2.games,
       sets: match.sets.map((set) => set.player2Games),
     },
   };

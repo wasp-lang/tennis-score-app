@@ -34,7 +34,7 @@ model Match {
   player2Games  Int    @default(0)
 
   // Make it optional for now
-  score Json?
+  score Json
 
   // Set history
   sets Set[]
