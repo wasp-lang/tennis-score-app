@@ -16,6 +16,7 @@ model Match {
   id         String   @id @default(uuid())
   createdAt  DateTime @default(now())
   isComplete Boolean  @default(false)
+  isPublic   Boolean  @default(false)
   currentSet Int      @default(1)
   server     Int      @default(1)
 

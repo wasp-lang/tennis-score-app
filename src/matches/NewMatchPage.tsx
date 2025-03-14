@@ -23,10 +23,7 @@ export function NewMatchPage({ user }: { user: AuthUser }) {
 
   const onSubmit = async (data: CreateMatchForm) => {
     try {
-      const match = await createMatchFn({
-        player1Name: data.player1Name,
-        player2Name: data.player2Name,
-      });
+      const match = await createMatchFn(data);
       navigate(`/match/${match.id}`);
     } catch (error) {
       console.error("Failed to create match:", error);
@@ -80,6 +77,21 @@ export function NewMatchPage({ user }: { user: AuthUser }) {
                 {errors.player2Name.message}
               </p>
             )}
+          </div>
+
+          <div className="flex items-center">
+            <input
+              {...register("isPublic")}
+              type="checkbox"
+              id="isPublic"
+              className="h-4 w-4 text-forest focus:ring-forest border-gray-300 rounded"
+            />
+            <label
+              htmlFor="isPublic"
+              className="ml-2 block text-sm text-gray-700"
+            >
+              Make this match public
+            </label>
           </div>
 
           <button

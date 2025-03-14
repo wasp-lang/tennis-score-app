@@ -7,17 +7,27 @@ import {
   GetMatch,
   GetMatches,
   UpdateScore,
+  UpdateMatchVisibility,
 } from "wasp/server/operations";
 import { calculateNewScoreState, ScoringPlayer } from "./tennisLogic";
 import {
   createMatchInputSchema,
   getMatchInputSchema,
   updateScoreInputSchema,
+  updateMatchVisibilitySchema,
 } from "./validation";
 
 export const getMatches = (async (_args, context) => {
   try {
+    // Build filter condition based on user authentication status
+    const whereCondition = context.user
+      ? {
+          OR: [{ isPublic: true }, { createdById: context.user.id }],
+        }
+      : { isPublic: true };
+
     const matches = await context.entities.Match.findMany({
+      where: whereCondition,
       include: {
         sets: true,
       },
@@ -64,13 +74,15 @@ export const createMatch = (async (rawArgs, context) => {
     throw new HttpError(401, "You must be logged in");
   }
 
-  const { player1Name, player2Name } = createMatchInputSchema.parse(rawArgs);
+  const { player1Name, player2Name, isPublic } =
+    createMatchInputSchema.parse(rawArgs);
 
   try {
     const newMatch = await context.entities.Match.create({
       data: {
         player1Name,
         player2Name,
+        isPublic,
         createdBy: { connect: { id: context.user.id } },
       },
       include: {
@@ -86,7 +98,11 @@ export const createMatch = (async (rawArgs, context) => {
     console.error("Error creating match:", error);
     throw new HttpError(500, "Error creating the match");
   }
-}) satisfies CreateMatch<{ player1Name: string; player2Name: string }>;
+}) satisfies CreateMatch<{
+  player1Name: string;
+  player2Name: string;
+  isPublic: boolean;
+}>;
 
 export const updateScore = (async (rawArgs, context) => {
   if (!context.user) {
@@ -158,12 +174,52 @@ export const updateScore = (async (rawArgs, context) => {
   }
 }) satisfies UpdateScore<{ matchId: string; scoringPlayer: ScoringPlayer }>;
 
+export const updateMatchVisibility = (async (rawArgs, context) => {
+  if (!context.user) {
+    throw new HttpError(401, "You must be logged in");
+  }
+
+  const { matchId, isPublic } = updateMatchVisibilitySchema.parse(rawArgs);
+
+  try {
+    const match = await context.entities.Match.findUnique({
+      where: { id: matchId },
+    });
+
+    if (!match) {
+      throw new HttpError(404, "Match not found");
+    }
+
+    if (match.createdById !== context.user.id) {
+      throw new HttpError(403, "Only the match creator can change visibility");
+    }
+
+    // Update match visibility
+    await context.entities.Match.update({
+      where: { id: matchId },
+      data: {
+        isPublic,
+      },
+    });
+  } catch (error) {
+    if (error instanceof HttpError) {
+      throw error;
+    }
+    if (error instanceof z.ZodError) {
+      throw new HttpError(400, "Invalid parameters");
+    }
+    console.error("Error updating match visibility:", error);
+    throw new HttpError(500, "Error updating match visibility");
+  }
+}) satisfies UpdateMatchVisibility<{ matchId: string; isPublic: boolean }>;
+
 // Helper functions
 function formatMatchResponse(match: Match & { sets: Set[] }) {
   return {
     id: match.id,
     createdAt: match.createdAt.getTime(),
     isComplete: match.isComplete,
+    isPublic: match.isPublic,
     currentSet: match.currentSet,
     server: match.server,
     createdBy: match.createdById,

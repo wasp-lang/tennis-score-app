@@ -36,6 +36,11 @@ action updateScore {
   entities: [Match, Set]
 }
 
+action updateMatchVisibility {
+  fn: import { updateMatchVisibility } from "@src/matches/operations",
+  entities: [Match]
+}
+
 
 // Routes
 route RootRoute { path: "/", to: IndexPage }

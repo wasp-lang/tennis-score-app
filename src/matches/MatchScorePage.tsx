@@ -1,11 +1,12 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Globe, Lock } from "lucide-react";
 import {
   useQuery,
   useAction,
   getMatch,
   updateScore,
+  updateMatchVisibility,
 } from "wasp/client/operations";
 
 import { AuthUser } from "wasp/auth";
@@ -30,6 +31,7 @@ export function MatchScorePage({ user }: { user: AuthUser }) {
     }
   );
   const updateScoreFn = useAction(updateScore);
+  const updateVisibilityFn = useAction(updateMatchVisibility);
 
   const handleScore = async (player: 1 | 2) => {
     if (matchId) {
@@ -38,6 +40,20 @@ export function MatchScorePage({ user }: { user: AuthUser }) {
       } catch (error) {
         console.error("Failed to update score:", error);
         alert("Failed to update score.");
+      }
+    }
+  };
+
+  const handleToggleVisibility = async () => {
+    if (matchId) {
+      try {
+        await updateVisibilityFn({
+          matchId,
+          isPublic: !match!.isPublic,
+        });
+      } catch (error) {
+        console.error("Failed to update visibility:", error);
+        alert("Failed to update match visibility.");
       }
     }
   };
@@ -61,6 +77,7 @@ export function MatchScorePage({ user }: { user: AuthUser }) {
   }
 
   const { player1, player2 } = match;
+  const isOwner = match.createdBy === user.id;
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -81,7 +98,27 @@ export function MatchScorePage({ user }: { user: AuthUser }) {
           player2Name={player2.name}
         />
 
-        <div className="bg-white rounded-lg shadow-xl p-6">
+        <div className="bg-white rounded-lg shadow-xl p-6 relative">
+          <div className="flex justify-end items-center mb-4">
+            {isOwner && (
+              <button
+                onClick={handleToggleVisibility}
+                className="text-gray-600 hover:text-forest transition-colors flex items-center gap-1 text-sm border px-2 py-1 rounded-full hover:bg-gray-50"
+                title={match.isPublic ? "Change to private" : "Make public"}
+              >
+                {match.isPublic ? (
+                  <>
+                    <Globe className="w-4 h-4" /> Public
+                  </>
+                ) : (
+                  <>
+                    <Lock className="w-4 h-4" /> Private
+                  </>
+                )}
+              </button>
+            )}
+          </div>
+
           {match.isComplete && <FinalScore match={match} />}
           {!match.isComplete && <CurrentPoints match={match} />}
 
