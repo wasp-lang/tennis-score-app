@@ -12,6 +12,7 @@ import { AuthUser } from "wasp/auth";
 import { ResultTable } from "./components/ResultTable";
 import { CurrentPoints } from "./components/CurrentPoints";
 import { FinalScore } from "./components/FinalScore";
+import { TennisCourtVisualisation } from "../components/TennisCourt";
 
 export function MatchScorePage({ user }: { user: AuthUser }) {
   const { matchId } = useParams<{ matchId: string }>();
@@ -59,7 +60,7 @@ export function MatchScorePage({ user }: { user: AuthUser }) {
     );
   }
 
-  const { player1, player2, server, currentSet } = match;
+  const { player1, player2 } = match;
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -73,6 +74,12 @@ export function MatchScorePage({ user }: { user: AuthUser }) {
           </button>
           <h1 className="text-2xl font-bold text-[#1B2838] ml-4">Live Match</h1>
         </div>
+
+        <TennisCourtVisualisation
+          className="h-64 md:h-96"
+          player1Name={player1.name}
+          player2Name={player2.name}
+        />
 
         <div className="bg-white rounded-lg shadow-xl p-6">
           {match.isComplete && <FinalScore match={match} />}
