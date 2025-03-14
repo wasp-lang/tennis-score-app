@@ -19,18 +19,22 @@ export function calculateNewScoreState(
 ): MatchState {
   const player = scoringPlayer === 1 ? "player1" : "player2";
   const opponent = scoringPlayer === 1 ? "player2" : "player1";
+  const score = match.score as {
+    player1: { points: TennisPoint; games: number };
+    player2: { points: TennisPoint; games: number };
+  };
 
   const pointsState = calculateNewPoints(
-    match[`${player}Points`] as TennisPoint,
-    match[`${opponent}Points`] as TennisPoint,
+    score[`${player}`].points,
+    score[`${opponent}`].points,
     player,
     opponent
   );
 
   const gamesState = calculateNewGames(
     pointsState,
-    match.player1Games,
-    match.player2Games,
+    score.player1.games,
+    score.player2.games,
     player,
     opponent,
     match.server
