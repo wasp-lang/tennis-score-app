@@ -1,4 +1,5 @@
 import * as z from "zod";
+
 import { Match, Set } from "wasp/entities";
 import { HttpError } from "wasp/server";
 import {
@@ -7,11 +8,12 @@ import {
   GetMatches,
   UpdateScore,
 } from "wasp/server/operations";
+import { calculateNewScoreState, ScoringPlayer } from "./tennisLogic";
 import {
-  calculateNewScoreState,
-  ScoringPlayer,
-  scoringPlayerSchema,
-} from "./tennisLogic";
+  createMatchInputSchema,
+  getMatchInputSchema,
+  updateScoreInputSchema,
+} from "./validation";
 
 export const getMatches = (async (_args, context) => {
   try {
@@ -30,10 +32,6 @@ export const getMatches = (async (_args, context) => {
     return [];
   }
 }) satisfies GetMatches;
-
-const getMatchInputSchema = z.object({
-  matchId: z.string(),
-});
 
 export const getMatch = (async (rawArgs, context) => {
   try {
@@ -60,11 +58,6 @@ export const getMatch = (async (rawArgs, context) => {
     throw new HttpError(500, "Error fetching match details");
   }
 }) satisfies GetMatch<{ matchId: string }>;
-
-const createMatchInputSchema = z.object({
-  player1Name: z.string().min(1),
-  player2Name: z.string().min(1),
-});
 
 export const createMatch = (async (rawArgs, context) => {
   if (!context.user) {
@@ -94,11 +87,6 @@ export const createMatch = (async (rawArgs, context) => {
     throw new HttpError(500, "Error creating the match");
   }
 }) satisfies CreateMatch<{ player1Name: string; player2Name: string }>;
-
-const updateScoreInputSchema = z.object({
-  matchId: z.string(),
-  scoringPlayer: scoringPlayerSchema,
-});
 
 export const updateScore = (async (rawArgs, context) => {
   if (!context.user) {

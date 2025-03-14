@@ -1,10 +1,10 @@
 import * as z from "zod";
 
 import { Match, Set } from "wasp/entities";
+import { scoringPlayerSchema } from "./validation";
 
 type TennisPoint = "0" | "15" | "30" | "40" | "A";
 
-export const scoringPlayerSchema = z.literal(1).or(z.literal(2));
 export type ScoringPlayer = z.infer<typeof scoringPlayerSchema>;
 
 /**

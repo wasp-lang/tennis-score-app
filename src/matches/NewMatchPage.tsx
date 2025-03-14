@@ -1,31 +1,36 @@
+import * as z from "zod";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAction, createMatch } from "wasp/client/operations";
 import { AuthUser } from "wasp/auth";
 
+import { useForm } from "react-hook-form";
+import { createMatchInputSchema } from "./validation";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+type CreateMatchForm = z.infer<typeof createMatchInputSchema>;
+
 export function NewMatchPage({ user }: { user: AuthUser }) {
-  const [player1, setPlayer1] = useState("");
-  const [player2, setPlayer2] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<CreateMatchForm>({
+    resolver: zodResolver(createMatchInputSchema),
+  });
   const navigate = useNavigate();
   const createMatchFn = useAction(createMatch);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!player1.trim() || !player2.trim() || isSubmitting) return;
-
+  const onSubmit = async (data: CreateMatchForm) => {
     try {
-      setIsSubmitting(true);
       const match = await createMatchFn({
-        player1Name: player1.trim(),
-        player2Name: player2.trim(),
+        player1Name: data.player1Name,
+        player2Name: data.player2Name,
       });
       navigate(`/match/${match.id}`);
     } catch (error) {
       console.error("Failed to create match:", error);
       alert("Failed to create match. Please try again.");
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -36,7 +41,7 @@ export function NewMatchPage({ user }: { user: AuthUser }) {
           <h1 className="text-3xl font-bold text-navy ml-3">New Match</h1>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
             <label
               htmlFor="player1"
@@ -45,14 +50,16 @@ export function NewMatchPage({ user }: { user: AuthUser }) {
               Player 1
             </label>
             <input
+              {...register("player1Name")}
               type="text"
-              id="player1"
-              value={player1}
-              onChange={(e) => setPlayer1(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-forest focus:border-transparent"
               placeholder="Enter player name"
-              required
             />
+            {errors.player1Name && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.player1Name.message}
+              </p>
+            )}
           </div>
 
           <div>
@@ -63,14 +70,16 @@ export function NewMatchPage({ user }: { user: AuthUser }) {
               Player 2
             </label>
             <input
+              {...register("player2Name")}
               type="text"
-              id="player2"
-              value={player2}
-              onChange={(e) => setPlayer2(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-forest focus:border-transparent"
               placeholder="Enter player name"
-              required
             />
+            {errors.player2Name && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.player2Name.message}
+              </p>
+            )}
           </div>
 
           <button
