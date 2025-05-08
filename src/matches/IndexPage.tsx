@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus } from "lucide-react";
-import { useQuery, getMatches } from "wasp/client/operations";
+import { Plus, Mail, CheckCircle } from "lucide-react";
+import { useQuery, getMatches, scheduleSummaryEmail } from "wasp/client/operations";
 import { ResultTable } from "./components/ResultTable";
 import { CurrentPoints } from "./components/CurrentPoints";
 import { FinalScore } from "./components/FinalScore";
@@ -10,10 +10,14 @@ import type { Match } from "./types";
 import { logout, useAuth } from "wasp/client/auth";
 import { Link } from "wasp/client/router";
 import { AuthUser } from "wasp/auth";
+import { Toast } from "../components/Toast";
 
 export function IndexPage() {
   const navigate = useNavigate();
   const { data: user } = useAuth();
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState<"success" | "error" | "info">("success");
   const { data: matches, isLoading } = useQuery(
     getMatches,
     {},
@@ -25,6 +29,22 @@ export function IndexPage() {
   // Split matches into live and completed
   const liveMatches = matches?.filter((match) => !match.isComplete) || [];
   const completedMatches = matches?.filter((match) => match.isComplete) || [];
+
+  const handleScheduleSummaryEmailClick = () => {
+    scheduleSummaryEmail({ sendAt: new Date().toISOString() })
+      .then(() => {
+        console.log("Summary email scheduled successfully");
+        setToastMessage("Summary email scheduled successfully!");
+        setToastType("success");
+        setShowToast(true);
+      })
+      .catch((error) => {
+        console.error("Error scheduling summary email:", error);
+        setToastMessage("Failed to schedule summary email. Please try again.");
+        setToastType("error");
+        setShowToast(true);
+      });
+  };
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -39,6 +59,13 @@ export function IndexPage() {
               <Plus className="w-5 h-5 mr-2" />
               New Match
             </Link>
+            <button
+              onClick={handleScheduleSummaryEmailClick}
+              className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+            >
+              <Mail className="w-5 h-5 mr-2" />
+              Schedule Summary Email
+            </button>
             <button
               onClick={logout}
               className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-colors"
@@ -56,6 +83,14 @@ export function IndexPage() {
           </Link>
         )}
       </div>
+
+      {/* Toast component */}
+      <Toast 
+        message={toastMessage}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+        type={toastType}
+      />
 
       {isLoading ? (
         <div className="bg-white rounded-lg shadow-md p-6 text-center text-gray-500">

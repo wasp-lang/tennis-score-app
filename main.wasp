@@ -13,6 +13,13 @@ app tennisScoreApp {
   },
   client: {
     rootComponent: import { App } from "@src/App",
+  },
+  emailSender: {
+    provider: Dummy,
+    defaultFrom: {
+      name: "Example",
+      email: "hello@itsme.com"
+    },
   }
 }
 
@@ -41,6 +48,11 @@ action updateMatchVisibility {
   entities: [Match]
 }
 
+action scheduleSummaryEmail {
+  fn: import { scheduleSummaryEmail } from "@src/matches/operations",
+  entities: [Match]
+}
+
 route RootRoute { path: "/", to: IndexPage }
 page IndexPage {
   component: import { IndexPage } from "@src/matches/IndexPage"
@@ -66,4 +78,12 @@ page LoginPage {
 route SignupRoute { path: "/signup", to: SignupPage }
 page SignupPage {
   component: import { SignupPage } from "@src/auth/SignupPage"
+}
+
+job scheduleSummaryEmailJob {
+  executor: PgBoss,
+  perform: {
+    fn: import { emailSummary } from "@src/workers/schedule",
+  },
+  entities: [Match]
 }

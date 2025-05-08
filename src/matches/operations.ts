@@ -8,6 +8,7 @@ import {
   GetMatches,
   UpdateScore,
   UpdateMatchVisibility,
+  ScheduleSummaryEmail,
 } from "wasp/server/operations";
 import { calculateNewScoreState, ScoringPlayer } from "./tennisLogic";
 import {
@@ -15,7 +16,9 @@ import {
   getMatchInputSchema,
   updateScoreInputSchema,
   updateMatchVisibilitySchema,
+  scheduleEmailSummarySchema,
 } from "./validation";
+import { scheduleSummaryEmailJob } from "wasp/server/jobs";
 
 export const getMatches = (async (_args, context) => {
   try {
@@ -258,3 +261,14 @@ function formatMatchResponse(match: Match & { sets: Set[] }) {
     },
   };
 }
+
+export const scheduleSummaryEmail = (async (rawArgs, context) => {
+  if (!context.user) {
+    throw new HttpError(401, "You must be logged in");
+  }
+
+  const { sendAt } = scheduleEmailSummarySchema.parse(rawArgs);
+
+  await scheduleSummaryEmailJob.delay(sendAt).submit({ name: `Scheduled for ${sendAt}` });
+
+}) satisfies ScheduleSummaryEmail<{ sendAt: string }>;
