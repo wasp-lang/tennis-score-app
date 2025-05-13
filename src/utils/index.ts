@@ -1,4 +1,5 @@
 import { type Match, type Set } from "wasp/entities";
+
 type MatchWithSets = Match & {
   sets?: Set[];
 };
