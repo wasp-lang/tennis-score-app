@@ -83,7 +83,7 @@ page SignupPage {
 job sendEmailSummaryJob {
   executor: PgBoss,
   perform: {
-    fn: import { emailSummary } from "@src/workers/schedule",
+    fn: import { sendEmailSummary } from "@src/workers/schedule",
   },
   entities: [Match]
 }
