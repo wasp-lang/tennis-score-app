@@ -80,7 +80,7 @@ page SignupPage {
   component: import { SignupPage } from "@src/auth/SignupPage"
 }
 
-job scheduleSummaryEmailJob {
+job sendEmailSummaryJob {
   executor: PgBoss,
   perform: {
     fn: import { emailSummary } from "@src/workers/schedule",

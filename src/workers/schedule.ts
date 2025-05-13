@@ -1,8 +1,8 @@
-import { type ScheduleSummaryEmailJob } from "wasp/server/jobs";
+import { type SendEmailSummaryJob } from "wasp/server/jobs";
 import { emailSender } from "wasp/server/email";
 import { generateMatchSummary } from "../utils";
 
-export const emailSummary: ScheduleSummaryEmailJob<{}, void> = async (_, context) => {
+export const emailSummary: SendEmailSummaryJob<{}, void> = async (_, context) => {
   // Find yesterday's completed matches
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);

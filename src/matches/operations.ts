@@ -16,9 +16,8 @@ import {
   getMatchInputSchema,
   updateScoreInputSchema,
   updateMatchVisibilitySchema,
-  scheduleEmailSummarySchema,
 } from "./validation";
-import { scheduleSummaryEmailJob } from "wasp/server/jobs";
+import { sendEmailSummaryJob } from "wasp/server/jobs";
 
 export const getMatches = (async (_args, context) => {
   try {
@@ -262,13 +261,14 @@ function formatMatchResponse(match: Match & { sets: Set[] }) {
   };
 }
 
-export const scheduleSummaryEmail = (async (rawArgs, context) => {
+export const scheduleSummaryEmail = (async (_, context) => {
   if (!context.user) {
     throw new HttpError(401, "You must be logged in");
   }
 
-  const { sendAt } = scheduleEmailSummarySchema.parse(rawArgs);
+  // TODO: Update this date with the value you need
+  const sendAt = new Date().toISOString();
 
-  await scheduleSummaryEmailJob.delay(sendAt).submit({ name: `Scheduled for ${sendAt}` });
+  await sendEmailSummaryJob.delay(sendAt).submit({ name: `Scheduled for ${sendAt}` });
 
-}) satisfies ScheduleSummaryEmail<{ sendAt: string }>;
+}) satisfies ScheduleSummaryEmail<void>;

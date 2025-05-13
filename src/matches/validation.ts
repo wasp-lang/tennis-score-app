@@ -21,7 +21,3 @@ export const updateMatchVisibilitySchema = z.object({
   matchId: z.string(),
   isPublic: z.boolean(),
 });
-
-export const scheduleEmailSummarySchema = z.object({
-  sendAt: z.string(),
-});

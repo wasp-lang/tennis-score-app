@@ -31,7 +31,7 @@ export function IndexPage() {
   const completedMatches = matches?.filter((match) => match.isComplete) || [];
 
   const handleScheduleSummaryEmailClick = () => {
-    scheduleSummaryEmail({ sendAt: new Date().toISOString() })
+    scheduleSummaryEmail()
       .then(() => {
         console.log("Summary email scheduled successfully");
         setToastMessage("Summary email scheduled successfully!");
