@@ -272,7 +272,7 @@ export const scheduleSummaryEmail = (async (_, context) => {
     throw new HttpError(400, "User email not found");
   }
 
-  // TODO: Update this date with the value you need
+  // TODO: Update this date with the value you need (for example, tomorrow morning)
   const sendAt = new Date().toISOString();
 
   await sendEmailSummaryJob.delay(sendAt).submit({ 
