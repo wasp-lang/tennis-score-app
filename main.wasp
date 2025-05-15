@@ -19,11 +19,6 @@ app tennisScoreApp {
   },
   emailSender: {
     provider: Mailgun,
-    // defaultFrom: {
-    //   name: "Tennis Score App",
-    //   QUESTION: Support for something like? 👇
-    //   email: `no-reply@${env.MAILGUN_DOMAIN}`,
-    // }
   }
 }
 
