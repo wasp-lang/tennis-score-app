@@ -1,3 +1,4 @@
+import { subDays, startOfDay } from 'date-fns';
 import { type SendEmailSummaryJob } from "wasp/server/jobs";
 import { emailSender } from "wasp/server/email";
 import { generateMatchSummary } from "../utils";
@@ -8,11 +9,8 @@ type Input = {
 
 export const sendEmailSummary: SendEmailSummaryJob<Input, void> = async ({ email }, context) => {
   // Find yesterday's completed matches
-  const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
-  yesterday.setHours(0, 0, 0, 0);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const today = startOfDay(new Date());
+  const yesterday = startOfDay(subDays(new Date(), 1));
 
   const matches = await context.entities.Match.findMany({
     where: {
