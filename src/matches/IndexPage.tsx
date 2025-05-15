@@ -10,14 +10,11 @@ import type { Match } from "./types";
 import { logout, useAuth } from "wasp/client/auth";
 import { Link } from "wasp/client/router";
 import { AuthUser } from "wasp/auth";
-import { Toast } from "../components/Toast";
+import { toast } from "sonner";
 
 export function IndexPage() {
   const navigate = useNavigate();
   const { data: user } = useAuth();
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
-  const [toastType, setToastType] = useState<"success" | "error" | "info">("success");
   const { data: matches, isLoading } = useQuery(
     getMatches,
     {},
@@ -34,15 +31,11 @@ export function IndexPage() {
     scheduleSummaryEmail()
       .then(() => {
         console.log("Summary email scheduled successfully");
-        setToastMessage("Summary email scheduled successfully!");
-        setToastType("success");
-        setShowToast(true);
+        toast.success("Summary email scheduled successfully!");
       })
       .catch((error) => {
         console.error("Error scheduling summary email:", error);
-        setToastMessage("Failed to schedule summary email. Please try again.");
-        setToastType("error");
-        setShowToast(true);
+        toast.error("Failed to schedule summary email. Please try again.");
       });
   };
 
@@ -83,14 +76,6 @@ export function IndexPage() {
           </Link>
         )}
       </div>
-
-      {/* Toast component */}
-      <Toast 
-        message={toastMessage}
-        isVisible={showToast}
-        onClose={() => setShowToast(false)}
-        type={toastType}
-      />
 
       {isLoading ? (
         <div className="bg-white rounded-lg shadow-md p-6 text-center text-gray-500">
