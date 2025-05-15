@@ -4,7 +4,32 @@ type MatchWithSets = Match & {
   sets?: Set[];
 };
 
-// Parse the tennis score into a readable format
+function getSetsInfo(match: MatchWithSets): string {
+  return match.sets?.length 
+    ? match.sets.map(set => `${set.player1Games}-${set.player2Games}`).join(", ")
+    : "";
+}
+
+function getScoreString(
+  status: string,
+  setsInfo: string,
+  match: MatchWithSets,
+  currentGame: string,
+  gamesScore: string
+): string {
+  const parts = [status];
+
+  if (setsInfo) {
+    parts.push(`Sets: [${setsInfo}]`);
+  }
+
+  if (!match.isComplete) {
+    parts.push(`Current game: ${currentGame}`, `Games: ${gamesScore}`);
+  }
+
+  return parts.join(": ");
+}
+
 function formatTennisScore(match: MatchWithSets): string {
   if (!match.score || typeof match.score !== "object") {
     throw new Error("Invalid score format");
@@ -17,29 +42,11 @@ function formatTennisScore(match: MatchWithSets): string {
     };
     
     const currentGame = `${score.player1.points}-${score.player2.points}`;
-    
     const gamesScore = `${score.player1.games}-${score.player2.games}`;
-    
-    let setsInfo = "";
-    if (match.sets && Array.isArray(match.sets) && match.sets.length > 0) {
-      setsInfo = match.sets.map(set => 
-        `${set.player1Games}-${set.player2Games}`
-      ).join(", ");
-    }
-    
+    const setsInfo = getSetsInfo(match);
     const status = match.isComplete ? "Completed" : "In progress";
     
-    let scoreString = `${status}: `;
-    
-    if (setsInfo) {
-      scoreString += `Sets: [${setsInfo}]`;
-    }
-    
-    if (!match.isComplete) {
-      scoreString += ` Current game: ${currentGame}, Games: ${gamesScore}`;
-    }
-    
-    return scoreString;
+    return getScoreString(status, setsInfo, match, currentGame, gamesScore);
   } catch (error) {
     console.error("Error parsing score:", error);
     return "Score format error";
@@ -47,7 +54,6 @@ function formatTennisScore(match: MatchWithSets): string {
 }
 
 export const generateMatchSummary = (matches: MatchWithSets[]) => {
-  // Format matches for email
   const formattedMatches = matches.map(match => ({
     player1: match.player1Name,
     player2: match.player2Name,

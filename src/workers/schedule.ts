@@ -31,9 +31,7 @@ export const sendEmailSummary: SendEmailSummaryJob<Input, void> = async ({ email
   // Generate summary
   const { textContent, htmlContent } = generateMatchSummary(matches);
 
-  console.info('EMAIL SENT to:', email)
-
-  // Email Summary
+  // Send Summary
   const summary = await emailSender.send({
     from: {
       name: "Tennis Score App",
@@ -44,6 +42,4 @@ export const sendEmailSummary: SendEmailSummaryJob<Input, void> = async ({ email
     text: textContent,
     html: htmlContent,
   });
-
-  console.log('Summary email', summary);
 }
