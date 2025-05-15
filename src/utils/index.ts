@@ -6,8 +6,10 @@ type MatchWithSets = Match & {
 
 // Parse the tennis score into a readable format
 function formatTennisScore(match: MatchWithSets): string {
-  if (!match.score) return "No score available";
-  
+  if (!match.score || typeof match.score !== "object") {
+    throw new Error("Invalid score format");
+  }
+
   try {
     const score = match.score as {
       player1: { points: string; games: number };
