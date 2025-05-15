@@ -2,7 +2,11 @@ import { type SendEmailSummaryJob } from "wasp/server/jobs";
 import { emailSender } from "wasp/server/email";
 import { generateMatchSummary } from "../utils";
 
-export const sendEmailSummary: SendEmailSummaryJob<{}, void> = async (_, context) => {
+type Input = {
+  email: string;
+}
+
+export const sendEmailSummary: SendEmailSummaryJob<Input, void> = async ({ email }, context) => {
   // Find yesterday's completed matches
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
@@ -29,15 +33,19 @@ export const sendEmailSummary: SendEmailSummaryJob<{}, void> = async (_, context
   // Generate summary
   const { textContent, htmlContent } = generateMatchSummary(matches);
 
+  console.info('EMAIL SENT to:', email)
+
   // Email Summary
   const summary = await emailSender.send({
     from: {
       name: "Tennis Score App",
-      email: "notifications@tennisscoreapp.com",
+      email: `no-reply@${process.env.MAILGUN_DOMAIN}`,
     },
-    to: "user@domain.com",
+    to: email,
     subject: "Daily Tennis Matches Summary",
     text: textContent,
     html: htmlContent,
   });
+
+  console.log('Summary email', summary);
 }

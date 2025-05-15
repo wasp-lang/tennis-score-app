@@ -7,7 +7,10 @@ app tennisScoreApp {
   auth: {
     userEntity: User,
     methods: {
-      google: {},
+      google: {
+        configFn: import { getConfig } from "@src/auth/google.js",
+        userSignupFields: import { userSignupFields } from "@src/auth/google.js"
+      },
     },
     onAuthFailedRedirectTo: "/login",
   },
@@ -15,11 +18,12 @@ app tennisScoreApp {
     rootComponent: import { App } from "@src/App",
   },
   emailSender: {
-    provider: Dummy,
-    defaultFrom: {
-      name: "Example",
-      email: "hello@itsme.com"
-    },
+    provider: Mailgun,
+    // defaultFrom: {
+    //   name: "Tennis Score App",
+    //   QUESTION: Support for something like? 👇
+    //   email: `no-reply@${env.MAILGUN_DOMAIN}`,
+    // }
   }
 }
 

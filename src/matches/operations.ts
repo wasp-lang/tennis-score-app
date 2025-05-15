@@ -266,9 +266,18 @@ export const scheduleSummaryEmail = (async (_, context) => {
     throw new HttpError(401, "You must be logged in");
   }
 
+  const { email } = context.user;
+
+  if (!email) {
+    throw new HttpError(400, "User email not found");
+  }
+
   // TODO: Update this date with the value you need
   const sendAt = new Date().toISOString();
 
-  await sendEmailSummaryJob.delay(sendAt).submit({ name: `Scheduled for ${sendAt}` });
+  await sendEmailSummaryJob.delay(sendAt).submit({ 
+    name: `Scheduled for ${sendAt}`,
+    email,
+  });
 
 }) satisfies ScheduleSummaryEmail<void>;
