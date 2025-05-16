@@ -22,12 +22,14 @@ export function IndexPage() {
       refetchInterval: 5000,
     }
   );
+  const [isEmailLoading, setIsEmailLoading] = useState(false);
 
   // Split matches into live and completed
   const liveMatches = matches?.filter((match) => !match.isComplete) || [];
   const completedMatches = matches?.filter((match) => match.isComplete) || [];
 
   const handleScheduleSummaryEmailClick = () => {
+    setIsEmailLoading(true);
     scheduleSummaryEmail()
       .then(() => {
         console.log("Summary email scheduled successfully");
@@ -36,6 +38,9 @@ export function IndexPage() {
       .catch((error) => {
         console.error("Error scheduling summary email:", error);
         toast.error("Failed to schedule summary email. Please try again.");
+      })
+      .finally(() => {
+        setIsEmailLoading(false);
       });
   };
 
@@ -54,10 +59,11 @@ export function IndexPage() {
             </Link>
             <button
               onClick={handleScheduleSummaryEmailClick}
-              className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+              disabled={isEmailLoading}
+              className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Mail className="w-5 h-5 mr-2" />
-              Schedule Summary Email
+              {isEmailLoading ? "Scheduling..." : "Schedule Summary Email"}
             </button>
             <button
               onClick={logout}
