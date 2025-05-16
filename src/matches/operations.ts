@@ -276,7 +276,6 @@ export const scheduleSummaryEmail = (async (_, context) => {
   const sendAt = new Date().toISOString();
 
   await sendEmailSummaryJob.delay(sendAt).submit({ 
-    name: `Scheduled for ${sendAt}`,
     email,
   });
 
