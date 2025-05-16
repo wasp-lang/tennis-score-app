@@ -10,7 +10,7 @@ type Input = {
 export const sendEmailSummary: SendEmailSummaryJob<Input, void> = async ({ email }, context) => {
   // Find yesterday's completed matches
   const today = startOfDay(new Date());
-  const yesterday = startOfDay(subDays(new Date(), 1));
+  const yesterday = startOfDay(subDays(today, 1));
 
   const matches = await context.entities.Match.findMany({
     where: {
