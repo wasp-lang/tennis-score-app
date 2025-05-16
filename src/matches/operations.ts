@@ -1,8 +1,8 @@
-import * as z from "zod"
+import * as z from 'zod'
 
-import { Match, Set } from "wasp/entities"
-import { HttpError } from "wasp/server"
-import { sendEmailSummaryJob } from "wasp/server/jobs"
+import { Match, Set } from 'wasp/entities'
+import { HttpError } from 'wasp/server'
+import { sendEmailSummaryJob } from 'wasp/server/jobs'
 import {
   CreateMatch,
   GetMatch,
@@ -10,14 +10,14 @@ import {
   ScheduleSummaryEmail,
   UpdateMatchVisibility,
   UpdateScore,
-} from "wasp/server/operations"
-import { calculateNewScoreState, ScoringPlayer } from "./tennisLogic"
+} from 'wasp/server/operations'
+import { calculateNewScoreState, ScoringPlayer } from './tennisLogic'
 import {
   createMatchInputSchema,
   getMatchInputSchema,
   updateMatchVisibilitySchema,
   updateScoreInputSchema,
-} from "./validation"
+} from './validation'
 
 export const getMatches = (async (_args, context) => {
   try {
@@ -34,13 +34,13 @@ export const getMatches = (async (_args, context) => {
         sets: true,
       },
       orderBy: {
-        createdAt: "desc",
+        createdAt: 'desc',
       },
     })
 
     return matches.map(formatMatchResponse)
   } catch (error) {
-    console.error("Error fetching matches:", error)
+    console.error('Error fetching matches:', error)
     return []
   }
 }) satisfies GetMatches
@@ -56,7 +56,7 @@ export const getMatch = (async (rawArgs, context) => {
     })
 
     if (!match) {
-      throw new HttpError(404, "Match not found")
+      throw new HttpError(404, 'Match not found')
     }
 
     return formatMatchResponse(match)
@@ -65,15 +65,15 @@ export const getMatch = (async (rawArgs, context) => {
       throw error
     }
     if (error instanceof z.ZodError) {
-      throw new HttpError(400, "Invalid parameters")
+      throw new HttpError(400, 'Invalid parameters')
     }
-    throw new HttpError(500, "Error fetching match details")
+    throw new HttpError(500, 'Error fetching match details')
   }
 }) satisfies GetMatch<{ matchId: string }>
 
 export const createMatch = (async (rawArgs, context) => {
   if (!context.user) {
-    throw new HttpError(401, "You must be logged in")
+    throw new HttpError(401, 'You must be logged in')
   }
 
   const { player1Name, player2Name, isPublic } =
@@ -88,11 +88,11 @@ export const createMatch = (async (rawArgs, context) => {
         createdBy: { connect: { id: context.user.id } },
         score: {
           player1: {
-            points: "0",
+            points: '0',
             games: 0,
           },
           player2: {
-            points: "0",
+            points: '0',
             games: 0,
           },
         },
@@ -105,10 +105,10 @@ export const createMatch = (async (rawArgs, context) => {
     return formatMatchResponse(newMatch)
   } catch (error) {
     if (error instanceof z.ZodError) {
-      throw new HttpError(400, "Invalid parameters")
+      throw new HttpError(400, 'Invalid parameters')
     }
-    console.error("Error creating match:", error)
-    throw new HttpError(500, "Error creating the match")
+    console.error('Error creating match:', error)
+    throw new HttpError(500, 'Error creating the match')
   }
 }) satisfies CreateMatch<{
   player1Name: string
@@ -118,7 +118,7 @@ export const createMatch = (async (rawArgs, context) => {
 
 export const updateScore = (async (rawArgs, context) => {
   if (!context.user) {
-    throw new HttpError(401, "You must be logged in")
+    throw new HttpError(401, 'You must be logged in')
   }
 
   const { matchId, scoringPlayer } = updateScoreInputSchema.parse(rawArgs)
@@ -133,15 +133,15 @@ export const updateScore = (async (rawArgs, context) => {
     })
 
     if (!match) {
-      throw new HttpError(404, "Match not found")
+      throw new HttpError(404, 'Match not found')
     }
 
     if (match.createdById !== context.user.id) {
-      throw new HttpError(403, "Only the match creator can update scores")
+      throw new HttpError(403, 'Only the match creator can update scores')
     }
 
     if (match.isComplete) {
-      throw new HttpError(400, "Cannot update a completed match")
+      throw new HttpError(400, 'Cannot update a completed match')
     }
 
     const newState = calculateNewScoreState(match, scoringPlayer)
@@ -185,16 +185,16 @@ export const updateScore = (async (rawArgs, context) => {
       throw error
     }
     if (error instanceof z.ZodError) {
-      throw new HttpError(400, "Invalid parameters")
+      throw new HttpError(400, 'Invalid parameters')
     }
-    console.error("Error updating score:", error)
-    throw new HttpError(500, "Error updating the score")
+    console.error('Error updating score:', error)
+    throw new HttpError(500, 'Error updating the score')
   }
 }) satisfies UpdateScore<{ matchId: string; scoringPlayer: ScoringPlayer }>
 
 export const updateMatchVisibility = (async (rawArgs, context) => {
   if (!context.user) {
-    throw new HttpError(401, "You must be logged in")
+    throw new HttpError(401, 'You must be logged in')
   }
 
   const { matchId, isPublic } = updateMatchVisibilitySchema.parse(rawArgs)
@@ -205,11 +205,11 @@ export const updateMatchVisibility = (async (rawArgs, context) => {
     })
 
     if (!match) {
-      throw new HttpError(404, "Match not found")
+      throw new HttpError(404, 'Match not found')
     }
 
     if (match.createdById !== context.user.id) {
-      throw new HttpError(403, "Only the match creator can change visibility")
+      throw new HttpError(403, 'Only the match creator can change visibility')
     }
 
     // Update match visibility
@@ -224,10 +224,10 @@ export const updateMatchVisibility = (async (rawArgs, context) => {
       throw error
     }
     if (error instanceof z.ZodError) {
-      throw new HttpError(400, "Invalid parameters")
+      throw new HttpError(400, 'Invalid parameters')
     }
-    console.error("Error updating match visibility:", error)
-    throw new HttpError(500, "Error updating match visibility")
+    console.error('Error updating match visibility:', error)
+    throw new HttpError(500, 'Error updating match visibility')
   }
 }) satisfies UpdateMatchVisibility<{ matchId: string; isPublic: boolean }>
 
@@ -263,13 +263,13 @@ function formatMatchResponse(match: Match & { sets: Set[] }) {
 
 export const scheduleSummaryEmail = (async (_, context) => {
   if (!context.user) {
-    throw new HttpError(401, "You must be logged in")
+    throw new HttpError(401, 'You must be logged in')
   }
 
   const { email } = context.user
 
   if (!email) {
-    throw new HttpError(400, "User email not found")
+    throw new HttpError(400, 'User email not found')
   }
 
   // TODO: Update this date with the value you need (for example, tomorrow morning)

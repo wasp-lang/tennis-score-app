@@ -6,8 +6,8 @@
     "prettier-plugin-tailwindcss"
   ],
   "semi": false,
-  "singleQuote": false,
+  "singleQuote": true,
   "trailingComma": "es5",
-  "jsxSingleQuote": true,
+  "jsxSingleQuote": false,
   "experimentalOperatorPosition": "start"
 }

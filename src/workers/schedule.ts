@@ -1,7 +1,7 @@
-import { startOfDay, subDays } from "date-fns"
-import { emailSender } from "wasp/server/email"
-import { type SendEmailSummaryJob } from "wasp/server/jobs"
-import { generateMatchSummary } from "../utils"
+import { startOfDay, subDays } from 'date-fns'
+import { emailSender } from 'wasp/server/email'
+import { type SendEmailSummaryJob } from 'wasp/server/jobs'
+import { generateMatchSummary } from '../utils'
 
 type Input = {
   email: string
@@ -27,7 +27,7 @@ export const sendEmailSummary: SendEmailSummaryJob<Input, void> = async (
       sets: true,
     },
     orderBy: {
-      createdAt: "asc",
+      createdAt: 'asc',
     },
   })
 
@@ -37,11 +37,11 @@ export const sendEmailSummary: SendEmailSummaryJob<Input, void> = async (
   // Send Summary
   const summary = await emailSender.send({
     from: {
-      name: "Tennis Score App",
+      name: 'Tennis Score App',
       email: `no-reply@${process.env.MAILGUN_DOMAIN}`,
     },
     to: email,
-    subject: "Daily Tennis Matches Summary",
+    subject: 'Daily Tennis Matches Summary',
     text: textContent,
     html: htmlContent,
   })
