@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus } from "lucide-react";
-import { useQuery, getMatches } from "wasp/client/operations";
+import { Plus, Mail, CheckCircle } from "lucide-react";
+import { useQuery, getMatches, scheduleSummaryEmail } from "wasp/client/operations";
 import { ResultTable } from "./components/ResultTable";
 import { CurrentPoints } from "./components/CurrentPoints";
 import { FinalScore } from "./components/FinalScore";
@@ -10,6 +10,7 @@ import type { Match } from "./types";
 import { logout, useAuth } from "wasp/client/auth";
 import { Link } from "wasp/client/router";
 import { AuthUser } from "wasp/auth";
+import { toast } from "sonner";
 
 export function IndexPage() {
   const navigate = useNavigate();
@@ -21,10 +22,27 @@ export function IndexPage() {
       refetchInterval: 5000,
     }
   );
+  const [isEmailLoading, setIsEmailLoading] = useState(false);
 
   // Split matches into live and completed
   const liveMatches = matches?.filter((match) => !match.isComplete) || [];
   const completedMatches = matches?.filter((match) => match.isComplete) || [];
+
+  const handleScheduleSummaryEmailClick = () => {
+    setIsEmailLoading(true);
+    scheduleSummaryEmail()
+      .then(() => {
+        console.log("Summary email scheduled successfully");
+        toast.success("Summary email scheduled successfully!");
+      })
+      .catch((error) => {
+        console.error("Error scheduling summary email:", error);
+        toast.error("Failed to schedule summary email. Please try again.");
+      })
+      .finally(() => {
+        setIsEmailLoading(false);
+      });
+  };
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -39,6 +57,14 @@ export function IndexPage() {
               <Plus className="w-5 h-5 mr-2" />
               New Match
             </Link>
+            <button
+              onClick={handleScheduleSummaryEmailClick}
+              disabled={isEmailLoading}
+              className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Mail className="w-5 h-5 mr-2" />
+              {isEmailLoading ? "Scheduling..." : "Schedule Summary Email"}
+            </button>
             <button
               onClick={logout}
               className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-colors"
