@@ -2,7 +2,7 @@
 
 <img width="1219" alt="score_page" src="https://github.com/user-attachments/assets/b2a7db57-8555-46d6-946b-38e5d1adb7d5" />
 
-> Imagine you are organising a tennis tournament and you want to keep track of the scores in real-time. You want some judge to keep score while watching a game. We want to allow people to keep track of all the matches that are played right now / were played earlier. 
+> Imagine you are organising a tennis tournament and you want to keep track of the scores in real-time. You want some judge to keep score while watching a game. We want to allow people to keep track of all the matches that are played right now / were played earlier.
 
 ## Running it locally
 

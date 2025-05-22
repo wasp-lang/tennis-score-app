@@ -1,6 +1,6 @@
-import { SignupForm } from "wasp/client/auth";
-import { Link } from "wasp/client/router";
-import { AuthLayout } from "./AuthLayout";
+import { SignupForm } from 'wasp/client/auth'
+import { Link } from 'wasp/client/router'
+import { AuthLayout } from './AuthLayout'
 
 export function SignupPage() {
   return (
@@ -11,5 +11,5 @@ export function SignupPage() {
         I already have an account (<Link to="/login">go to login</Link>).
       </span>
     </AuthLayout>
-  );
+  )
 }
