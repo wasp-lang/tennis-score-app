@@ -1,5 +1,10 @@
 import { type Match, type Set } from 'wasp/entities'
 
+export function isValidEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email)
+}
+
 type MatchWithSets = Match & {
   sets?: Set[]
 }

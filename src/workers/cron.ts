@@ -1,16 +1,26 @@
 import { startOfDay, subDays } from 'date-fns'
 import { emailSender } from 'wasp/server/email'
 import { type SendEmailSummaryJob } from 'wasp/server/jobs'
-import { generateMatchSummary } from '../utils'
+import { generateMatchSummary, isValidEmail } from '../utils'
 
-type Input = {
-  email: string
-}
-
-export const sendEmailSummary: SendEmailSummaryJob<Input, void> = async (
-  { email },
+export const sendEmailSummary: SendEmailSummaryJob<{}, void> = async (
+  _,
   context
 ) => {
+  const email = process.env.SUMMARY_RECIPIENT_EMAIL
+
+  if (!email) {
+    throw new Error(
+      'Recipient email not found. Please set SUMMARY_RECIPIENT_EMAIL in .env.server'
+    )
+  }
+
+  if (!isValidEmail(email)) {
+    throw new Error(
+      'Invalid email format. Please provide a valid email in SUMMARY_RECIPIENT_EMAIL'
+    )
+  }
+
   // Find yesterday's completed matches
   const today = startOfDay(new Date())
   const yesterday = startOfDay(subDays(today, 1))
@@ -35,7 +45,7 @@ export const sendEmailSummary: SendEmailSummaryJob<Input, void> = async (
   const { textContent, htmlContent } = generateMatchSummary(matches)
 
   // Send Summary
-  const summary = await emailSender.send({
+  await emailSender.send({
     from: {
       name: 'Tennis Score App',
       email: `no-reply@${process.env.MAILGUN_DOMAIN}`,

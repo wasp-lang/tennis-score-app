@@ -2,12 +2,10 @@ import * as z from 'zod'
 
 import { Match, Set } from 'wasp/entities'
 import { HttpError } from 'wasp/server'
-import { sendEmailSummaryJob } from 'wasp/server/jobs'
 import {
   CreateMatch,
   GetMatch,
   GetMatches,
-  ScheduleEmailSummary,
   UpdateMatchVisibility,
   UpdateScore,
 } from 'wasp/server/operations'
@@ -260,22 +258,3 @@ function formatMatchResponse(match: Match & { sets: Set[] }) {
     },
   }
 }
-
-export const scheduleEmailSummary = (async (_, context) => {
-  if (!context.user) {
-    throw new HttpError(401, 'You must be logged in')
-  }
-
-  const { email } = context.user
-
-  if (!email) {
-    throw new HttpError(400, 'User email not found')
-  }
-
-  // TODO: Update this date with the value you need (for example, tomorrow morning)
-  const sendAt = new Date().toISOString()
-
-  await sendEmailSummaryJob.delay(sendAt).submit({
-    email,
-  })
-}) satisfies ScheduleEmailSummary<void>

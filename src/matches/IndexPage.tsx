@@ -1,14 +1,8 @@
-import { Mail, Plus } from 'lucide-react'
-import { useState } from 'react'
+import { Plus } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { toast } from 'sonner'
 import { AuthUser } from 'wasp/auth'
 import { logout, useAuth } from 'wasp/client/auth'
-import {
-  getMatches,
-  scheduleEmailSummary,
-  useQuery,
-} from 'wasp/client/operations'
+import { getMatches, useQuery } from 'wasp/client/operations'
 import { Link } from 'wasp/client/router'
 import { cn } from '../tailwind'
 import { CurrentPoints } from './components/CurrentPoints'
@@ -26,27 +20,10 @@ export function IndexPage() {
       refetchInterval: 5000,
     }
   )
-  const [isEmailLoading, setIsEmailLoading] = useState(false)
 
   // Split matches into live and completed
   const liveMatches = matches?.filter((match) => !match.isComplete) || []
   const completedMatches = matches?.filter((match) => match.isComplete) || []
-
-  const handleScheduleEmailSummaryClick = () => {
-    setIsEmailLoading(true)
-    scheduleEmailSummary()
-      .then(() => {
-        console.log('Summary email scheduled successfully')
-        toast.success('Summary email scheduled successfully!')
-      })
-      .catch((error) => {
-        console.error('Error scheduling summary email:', error)
-        toast.error('Failed to schedule summary email. Please try again.')
-      })
-      .finally(() => {
-        setIsEmailLoading(false)
-      })
-  }
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -61,14 +38,6 @@ export function IndexPage() {
               <Plus className="mr-2 h-5 w-5" />
               New Match
             </Link>
-            <button
-              onClick={handleScheduleEmailSummaryClick}
-              disabled={isEmailLoading}
-              className="flex items-center rounded-md bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <Mail className="mr-2 h-5 w-5" />
-              {isEmailLoading ? 'Scheduling...' : 'Schedule Summary Email'}
-            </button>
             <button
               onClick={logout}
               className="rounded-md bg-gray-300 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-400"
