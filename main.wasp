@@ -47,11 +47,6 @@ action updateMatchVisibility {
   entities: [Match]
 }
 
-action scheduleEmailSummary {
-  fn: import { scheduleEmailSummary } from "@src/matches/operations",
-  entities: [Match]
-}
-
 route RootRoute { path: "/", to: IndexPage }
 page IndexPage {
   component: import { IndexPage } from "@src/matches/IndexPage"
@@ -84,5 +79,6 @@ job sendEmailSummaryJob {
   perform: {
     fn: import { sendEmailSummary } from "@src/workers/schedule",
   },
+  schedule: { cron: "0 8 * * *" },
   entities: [Match]
 }
