@@ -1,24 +1,23 @@
-"use client";
+'use client'
 
-import { useRef, useEffect, useState } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Text } from "@react-three/drei";
-import * as THREE from "three";
-import { cn } from "../tailwind";
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { useEffect, useState } from 'react'
+import * as THREE from 'three'
+import { cn } from '../tailwind'
 
 export function TennisCourtVisualisation({
   className,
   player1Name,
   player2Name,
 }: {
-  className?: string;
-  player1Name: string;
-  player2Name: string;
+  className?: string
+  player1Name: string
+  player2Name: string
 }) {
   return (
-    <div className={cn("w-full h-full", className)}>
+    <div className={cn('h-full w-full', className)}>
       <Canvas shadows camera={{ position: [0, 5, 15], fov: 30 }}>
-        <fog attach="fog" args={["#87CEEB", 30, 90]} />
+        <fog attach="fog" args={['#87CEEB', 30, 90]} />
 
         <ambientLight intensity={0.6} />
         <directionalLight
@@ -28,42 +27,42 @@ export function TennisCourtVisualisation({
           shadow-mapSize={[2048, 2048]}
           shadow-bias={-0.0001}
         />
-        <hemisphereLight args={["#87CEEB", "#4CAF50", 0.7]} />
+        <hemisphereLight args={['#87CEEB', '#4CAF50', 0.7]} />
 
         <OrbitalCamera />
         <TennisCourt player1Name={player1Name} player2Name={player2Name} />
       </Canvas>
     </div>
-  );
+  )
 }
 
 function OrbitalCamera() {
-  const { camera } = useThree();
-  const [radius] = useState(22);
-  const [height] = useState(10);
-  const [speed] = useState(0.15);
+  const { camera } = useThree()
+  const [radius] = useState(22)
+  const [height] = useState(10)
+  const [speed] = useState(0.15)
 
   useEffect(() => {
-    camera.lookAt(0, 0, 0);
-  }, [camera]);
+    camera.lookAt(0, 0, 0)
+  }, [camera])
 
   useFrame(({ clock }) => {
-    const t = clock.getElapsedTime();
-    const x = Math.sin(t * speed) * radius;
-    const z = Math.cos(t * speed) * radius;
+    const t = clock.getElapsedTime()
+    const x = Math.sin(t * speed) * radius
+    const z = Math.cos(t * speed) * radius
 
     // Smooth camera movement with slight vertical oscillation
-    camera.position.x = x;
-    camera.position.z = z;
-    camera.position.y = height + Math.sin(t * 0.3) * 1.5;
+    camera.position.x = x
+    camera.position.z = z
+    camera.position.y = height + Math.sin(t * 0.3) * 1.5
 
-    camera.lookAt(0, 0, 0);
-  });
+    camera.lookAt(0, 0, 0)
+  })
 
-  return null;
+  return null
 }
 
-function TennisCourt({ player1Name = "Player 1", player2Name = "Player 2" }) {
+function TennisCourt({ player1Name = 'Player 1', player2Name = 'Player 2' }) {
   return (
     <group>
       {/* Court surface with improved materials */}
@@ -103,17 +102,17 @@ function TennisCourt({ player1Name = "Player 1", player2Name = "Player 2" }) {
         <meshStandardMaterial color="#555555" metalness={0.6} roughness={0.4} />
       </mesh>
     </group>
-  );
+  )
 }
 
 function CourtLines() {
   // Create a reusable bright white material for all lines
   const lineMaterial = new THREE.MeshStandardMaterial({
-    color: "#FFFFFF",
+    color: '#FFFFFF',
     roughness: 0.3,
-    emissive: "#FFFFFF",
+    emissive: '#FFFFFF',
     emissiveIntensity: 0.1,
-  });
+  })
 
   return (
     <group position={[0, 0.01, 0]}>
@@ -156,5 +155,5 @@ function CourtLines() {
         <primitive object={lineMaterial} />
       </mesh>
     </group>
-  );
+  )
 }

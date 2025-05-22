@@ -1,4 +1,4 @@
-import { type Match, type Set } from "wasp/entities"
+import { type Match, type Set } from 'wasp/entities'
 
 type MatchWithSets = Match & {
   sets?: Set[]
@@ -8,8 +8,8 @@ function getSetsInfo(match: MatchWithSets): string {
   return match.sets?.length
     ? match.sets
         .map((set) => `${set.player1Games}-${set.player2Games}`)
-        .join(", ")
-    : ""
+        .join(', ')
+    : ''
 }
 
 function getScoreString(
@@ -29,12 +29,12 @@ function getScoreString(
     parts.push(`Current game: ${currentGame}`, `Games: ${gamesScore}`)
   }
 
-  return parts.join(": ")
+  return parts.join(': ')
 }
 
 function formatTennisScore(match: MatchWithSets): string {
-  if (!match.score || typeof match.score !== "object") {
-    throw new Error("Invalid score format")
+  if (!match.score || typeof match.score !== 'object') {
+    throw new Error('Invalid score format')
   }
 
   try {
@@ -46,12 +46,12 @@ function formatTennisScore(match: MatchWithSets): string {
     const currentGame = `${score.player1.points}-${score.player2.points}`
     const gamesScore = `${score.player1.games}-${score.player2.games}`
     const setsInfo = getSetsInfo(match)
-    const status = match.isComplete ? "Completed" : "In progress"
+    const status = match.isComplete ? 'Completed' : 'In progress'
 
     return getScoreString(status, setsInfo, match, currentGame, gamesScore)
   } catch (error) {
-    console.error("Error parsing score:", error)
-    return "Score format error"
+    console.error('Error parsing score:', error)
+    return 'Score format error'
   }
 }
 
@@ -96,8 +96,8 @@ export const generateMatchSummary = (matches: MatchWithSets[]) => {
             </div>
           `
                 )
-                .join("")
-            : "<p>No matches were completed yesterday.</p>"
+                .join('')
+            : '<p>No matches were completed yesterday.</p>'
         }
         
         <div class="footer">
@@ -124,8 +124,8 @@ export const generateMatchSummary = (matches: MatchWithSets[]) => {
         ${match.date}
         `
             )
-            .join("\n\n")
-        : "No matches were completed yesterday."
+            .join('\n\n')
+        : 'No matches were completed yesterday.'
     }
     
     This is an automated summary from your Tennis Score App.

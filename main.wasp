@@ -47,8 +47,8 @@ action updateMatchVisibility {
   entities: [Match]
 }
 
-action scheduleSummaryEmail {
-  fn: import { scheduleSummaryEmail } from "@src/matches/operations",
+action scheduleEmailSummary {
+  fn: import { scheduleEmailSummary } from "@src/matches/operations",
   entities: [Match]
 }
 

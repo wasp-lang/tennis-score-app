@@ -1,21 +1,21 @@
-import { Match } from "../types";
-import { cn } from "../../tailwind";
+import { cn } from '../../tailwind'
+import { Match } from '../types'
 
 export function ResultTable({ match }: { match: Match }) {
   return (
     <table className="w-full">
       <thead>
         <tr className="bg-gray-100">
-          <th className="py-2 text-left pl-4">Player</th>
+          <th className="py-2 pl-4 text-left">Player</th>
           {match.player1.sets.map((_, i) => (
-            <th key={i} className="py-2 w-16 text-center">
+            <th key={i} className="w-16 py-2 text-center">
               S{i + 1}
             </th>
           ))}
           {!match.isComplete && (
             <>
-              <th className="py-2 w-16 text-center">Games</th>
-              <th className="py-2 w-16 text-center">Points</th>
+              <th className="w-16 py-2 text-center">Games</th>
+              <th className="w-16 py-2 text-center">Points</th>
             </>
           )}
         </tr>
@@ -27,8 +27,8 @@ export function ResultTable({ match }: { match: Match }) {
             <td
               key={i}
               className={cn(
-                "py-2 text-center",
-                i === match.currentSet && "font-bold"
+                'py-2 text-center',
+                i === match.currentSet && 'font-bold'
               )}
             >
               {set}
@@ -51,8 +51,8 @@ export function ResultTable({ match }: { match: Match }) {
             <td
               key={i}
               className={cn(
-                "py-2 text-center",
-                i === match.currentSet && "font-bold"
+                'py-2 text-center',
+                i === match.currentSet && 'font-bold'
               )}
             >
               {set}
@@ -71,5 +71,5 @@ export function ResultTable({ match }: { match: Match }) {
         </tr>
       </tbody>
     </table>
-  );
+  )
 }

@@ -1,73 +1,77 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Plus, Mail, CheckCircle } from "lucide-react";
-import { useQuery, getMatches, scheduleSummaryEmail } from "wasp/client/operations";
-import { ResultTable } from "./components/ResultTable";
-import { CurrentPoints } from "./components/CurrentPoints";
-import { FinalScore } from "./components/FinalScore";
-import { cn } from "../tailwind";
-import type { Match } from "./types";
-import { logout, useAuth } from "wasp/client/auth";
-import { Link } from "wasp/client/router";
-import { AuthUser } from "wasp/auth";
-import { toast } from "sonner";
+import { Mail, Plus } from 'lucide-react'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
+import { AuthUser } from 'wasp/auth'
+import { logout, useAuth } from 'wasp/client/auth'
+import {
+  getMatches,
+  scheduleEmailSummary,
+  useQuery,
+} from 'wasp/client/operations'
+import { Link } from 'wasp/client/router'
+import { cn } from '../tailwind'
+import { CurrentPoints } from './components/CurrentPoints'
+import { FinalScore } from './components/FinalScore'
+import { ResultTable } from './components/ResultTable'
+import type { Match } from './types'
 
 export function IndexPage() {
-  const navigate = useNavigate();
-  const { data: user } = useAuth();
+  const navigate = useNavigate()
+  const { data: user } = useAuth()
   const { data: matches, isLoading } = useQuery(
     getMatches,
     {},
     {
       refetchInterval: 5000,
     }
-  );
-  const [isEmailLoading, setIsEmailLoading] = useState(false);
+  )
+  const [isEmailLoading, setIsEmailLoading] = useState(false)
 
   // Split matches into live and completed
-  const liveMatches = matches?.filter((match) => !match.isComplete) || [];
-  const completedMatches = matches?.filter((match) => match.isComplete) || [];
+  const liveMatches = matches?.filter((match) => !match.isComplete) || []
+  const completedMatches = matches?.filter((match) => match.isComplete) || []
 
-  const handleScheduleSummaryEmailClick = () => {
-    setIsEmailLoading(true);
-    scheduleSummaryEmail()
+  const handleScheduleEmailSummaryClick = () => {
+    setIsEmailLoading(true)
+    scheduleEmailSummary()
       .then(() => {
-        console.log("Summary email scheduled successfully");
-        toast.success("Summary email scheduled successfully!");
+        console.log('Summary email scheduled successfully')
+        toast.success('Summary email scheduled successfully!')
       })
       .catch((error) => {
-        console.error("Error scheduling summary email:", error);
-        toast.error("Failed to schedule summary email. Please try again.");
+        console.error('Error scheduling summary email:', error)
+        toast.error('Failed to schedule summary email. Please try again.')
       })
       .finally(() => {
-        setIsEmailLoading(false);
-      });
-  };
+        setIsEmailLoading(false)
+      })
+  }
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="flex items-center justify-between mb-8">
+    <div className="mx-auto max-w-4xl">
+      <div className="mb-8 flex items-center justify-between">
         <h1 className="text-3xl font-bold text-navy">Tennis Matches</h1>
         {user && (
           <div className="flex items-center space-x-4">
             <Link
               to="/new"
-              className="flex items-center bg-forest text-white px-4 py-2 rounded-md hover:bg-[#234420] transition-colors no-underline"
+              className="flex items-center rounded-md bg-forest px-4 py-2 text-white no-underline transition-colors hover:bg-[#234420]"
             >
-              <Plus className="w-5 h-5 mr-2" />
+              <Plus className="mr-2 h-5 w-5" />
               New Match
             </Link>
             <button
-              onClick={handleScheduleSummaryEmailClick}
+              onClick={handleScheduleEmailSummaryClick}
               disabled={isEmailLoading}
-              className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center rounded-md bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <Mail className="w-5 h-5 mr-2" />
-              {isEmailLoading ? "Scheduling..." : "Schedule Summary Email"}
+              <Mail className="mr-2 h-5 w-5" />
+              {isEmailLoading ? 'Scheduling...' : 'Schedule Summary Email'}
             </button>
             <button
               onClick={logout}
-              className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-colors"
+              className="rounded-md bg-gray-300 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-400"
             >
               Logout
             </button>
@@ -76,7 +80,7 @@ export function IndexPage() {
         {!user && (
           <Link
             to="/login"
-            className="flex items-center bg-forest text-white px-4 py-2 rounded-md hover:bg-[#234420] transition-colors no-underline"
+            className="flex items-center rounded-md bg-forest px-4 py-2 text-white no-underline transition-colors hover:bg-[#234420]"
           >
             Login
           </Link>
@@ -84,24 +88,24 @@ export function IndexPage() {
       </div>
 
       {isLoading ? (
-        <div className="bg-white rounded-lg shadow-md p-6 text-center text-gray-500">
+        <div className="rounded-lg bg-white p-6 text-center text-gray-500 shadow-md">
           Loading matches...
         </div>
       ) : !matches || matches.length === 0 ? (
-        <div className="bg-white rounded-lg shadow-md p-6 text-center text-gray-500">
+        <div className="rounded-lg bg-white p-6 text-center text-gray-500 shadow-md">
           No matches found. Start a new match to begin scoring.
         </div>
       ) : (
         <div className="space-y-8">
           {/* Live Matches Section */}
           <div>
-            <h2 className="text-xl font-semibold text-navy mb-4 flex items-center">
-              <span className="h-2 w-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
+            <h2 className="mb-4 flex items-center text-xl font-semibold text-navy">
+              <span className="mr-2 h-2 w-2 animate-pulse rounded-full bg-red-500"></span>
               Live Matches
             </h2>
             <div className="space-y-4">
               {liveMatches.length === 0 ? (
-                <div className="bg-white rounded-lg shadow-md p-6 text-center text-gray-500">
+                <div className="rounded-lg bg-white p-6 text-center text-gray-500 shadow-md">
                   No live matches at the moment.
                 </div>
               ) : (
@@ -120,12 +124,12 @@ export function IndexPage() {
 
           {/* Completed Matches Section */}
           <div>
-            <h2 className="text-xl font-semibold text-navy mb-4">
+            <h2 className="mb-4 text-xl font-semibold text-navy">
               Completed Matches
             </h2>
             <div className="space-y-4">
               {completedMatches.length === 0 ? (
-                <div className="bg-white rounded-lg shadow-md p-6 text-center text-gray-500">
+                <div className="rounded-lg bg-white p-6 text-center text-gray-500 shadow-md">
                   No completed matches yet.
                 </div>
               ) : (
@@ -144,7 +148,7 @@ export function IndexPage() {
         </div>
       )}
     </div>
-  );
+  )
 }
 
 function MatchCard({
@@ -153,46 +157,46 @@ function MatchCard({
   onClick,
   user,
 }: {
-  match: Match;
-  isClickable: boolean;
-  onClick?: () => void;
-  user?: AuthUser | null;
+  match: Match
+  isClickable: boolean
+  onClick?: () => void
+  user?: AuthUser | null
 }) {
-  const isUserMatch = user && user.id === match.createdBy;
+  const isUserMatch = user && user.id === match.createdBy
 
   return (
     <div
       key={match.id}
       onClick={isClickable ? onClick : undefined}
       className={cn(
-        "bg-white rounded-lg shadow-md p-6",
-        isClickable && "cursor-pointer hover:shadow-lg transition-shadow"
+        'rounded-lg bg-white p-6 shadow-md',
+        isClickable && 'cursor-pointer transition-shadow hover:shadow-lg'
       )}
     >
-      <div className="flex justify-between items-center mb-4">
+      <div className="mb-4 flex items-center justify-between">
         <div className="text-sm text-gray-500">
           Started at {formatTime(match.createdAt)}
         </div>
         <div className="flex gap-2">
           <div
             className={cn(
-              "px-3 py-1 rounded-full text-sm flex items-center",
+              'flex items-center rounded-full px-3 py-1 text-sm',
               match.isComplete
-                ? "bg-gray-100 text-gray-600"
-                : "bg-green-100 text-green-600"
+                ? 'bg-gray-100 text-gray-600'
+                : 'bg-green-100 text-green-600'
             )}
           >
             {match.isComplete ? (
-              "Completed"
+              'Completed'
             ) : (
               <>
-                <span className="h-2 w-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
+                <span className="mr-2 h-2 w-2 animate-pulse rounded-full bg-red-500"></span>
                 Live
               </>
             )}
           </div>
           {isUserMatch && (
-            <div className="px-3 py-1 rounded-full text-sm bg-yellow-100 text-yellow-700">
+            <div className="rounded-full bg-yellow-100 px-3 py-1 text-sm text-yellow-700">
               Your match
             </div>
           )}
@@ -202,16 +206,16 @@ function MatchCard({
       {match.isComplete && <FinalScore match={match} />}
       {!match.isComplete && <CurrentPoints match={match} />}
 
-      <div className="border rounded-lg overflow-hidden">
+      <div className="overflow-hidden rounded-lg border">
         <ResultTable match={match} />
       </div>
     </div>
-  );
+  )
 }
 
 function formatTime(timestamp: number) {
   return new Date(timestamp).toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+    hour: '2-digit',
+    minute: '2-digit',
+  })
 }
