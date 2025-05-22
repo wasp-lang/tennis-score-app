@@ -1,7 +1,7 @@
 import { startOfDay, subDays } from 'date-fns'
 import { emailSender } from 'wasp/server/email'
 import { type SendEmailSummaryJob } from 'wasp/server/jobs'
-import { generateMatchSummary } from '../utils'
+import { generateMatchSummary, isValidEmail } from '../utils'
 
 export const sendEmailSummary: SendEmailSummaryJob<{}, void> = async (
   _,
@@ -12,6 +12,12 @@ export const sendEmailSummary: SendEmailSummaryJob<{}, void> = async (
   if (!email) {
     throw new Error(
       'Recipient email not found. Please set SUMMARY_RECIPIENT_EMAIL in .env.server'
+    )
+  }
+
+  if (!isValidEmail(email)) {
+    throw new Error(
+      'Invalid email format. Please provide a valid email in SUMMARY_RECIPIENT_EMAIL'
     )
   }
 
