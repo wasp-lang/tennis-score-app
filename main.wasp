@@ -77,7 +77,7 @@ page SignupPage {
 job sendEmailSummaryJob {
   executor: PgBoss,
   perform: {
-    fn: import { sendEmailSummary } from "@src/workers/schedule",
+    fn: import { sendEmailSummary } from "@src/workers/cron",
   },
   schedule: { cron: "0 8 * * *" },
   entities: [Match]
