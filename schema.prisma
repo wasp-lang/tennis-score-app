@@ -10,6 +10,7 @@ generator client {
 model User {
   id      String  @id @default(cuid())
   email   String?  @unique
+  isSummaryEnabled Boolean @default(false)
   matches Match[] @relation("CreatedBy")
 }
 

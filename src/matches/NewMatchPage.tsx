@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
-import { AuthUser } from 'wasp/auth'
+import type { AuthUser } from 'wasp/auth'
 import { createMatch, useAction } from 'wasp/client/operations'
-import * as z from 'zod'
+import type { z } from 'zod'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'

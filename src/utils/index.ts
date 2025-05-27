@@ -1,4 +1,5 @@
-import { type Match, type Set } from 'wasp/entities'
+// biome-ignore lint/suspicious/noShadowRestrictedNames: Set is native to the app
+import type { Match, Set } from 'wasp/entities'
 
 type MatchWithSets = Match & {
   sets?: Set[]

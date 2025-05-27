@@ -7,8 +7,9 @@
 ## Running it locally
 
 1. Make sure you have the latest version of [Wasp](https://wasp-lang.dev) installed by running `curl -sSL https://get.wasp-lang.dev/installer.sh | sh` in your terminal.
-2. Start the PostgreSQL database with `wasp db start`
-3. Run `wasp db migrate-dev`
-4. Run `wasp start`. This will install all dependencies and start the client and server for you :)
-5. Go to `localhost:3000` in your browser (your NodeJS server will be running on port `3001`)
-6. Install the Wasp extension for VSCode to get the best DX
+2. Create a new `.env.server` file (copy `example.env.server` as a starting point)
+3. Start the PostgreSQL database with `wasp db start`
+4. Run `wasp db migrate-dev`
+5. Run `wasp start`. This will install all dependencies and start the client and server for you :)
+6. Go to `localhost:3000` in your browser (your NodeJS server will be running on port `3001`)
+7. Install the [Wasp extension for VSCode](https://marketplace.visualstudio.com/items?itemName=wasp-lang.wasp) to get the best DX

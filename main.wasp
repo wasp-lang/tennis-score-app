@@ -47,9 +47,9 @@ action updateMatchVisibility {
   entities: [Match]
 }
 
-action scheduleEmailSummary {
-  fn: import { scheduleEmailSummary } from "@src/matches/operations",
-  entities: [Match]
+action updateUserSummaryEnabled {
+  fn: import { updateUserSummaryEnabled } from "@src/user/operations",
+  entities: [User]
 }
 
 route RootRoute { path: "/", to: IndexPage }
@@ -69,6 +69,12 @@ page MatchScorePage {
   authRequired: true
 }
 
+route ProfileRoute { path: "/profile", to: ProfilePage }
+page ProfilePage {
+  component: import { ProfilePage } from "@src/user/ProfilePage",
+  authRequired: true
+}
+
 route LoginRoute { path: "/login", to: LoginPage }
 page LoginPage {
   component: import { LoginPage } from "@src/auth/LoginPage"
@@ -82,7 +88,8 @@ page SignupPage {
 job sendEmailSummaryJob {
   executor: PgBoss,
   perform: {
-    fn: import { sendEmailSummary } from "@src/workers/schedule",
+    fn: import { sendEmailSummary } from "@src/workers/cron",
   },
-  entities: [Match]
+  schedule: { cron: "0 8 * * *" },
+  entities: [User, Match]
 }

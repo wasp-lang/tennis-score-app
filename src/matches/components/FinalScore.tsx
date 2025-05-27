@@ -1,4 +1,4 @@
-import { Match } from '../types'
+import type { Match } from '../types'
 
 export function FinalScore({ match }: { match: Match }) {
   if (!match.isComplete) return null

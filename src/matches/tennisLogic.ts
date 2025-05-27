@@ -1,7 +1,7 @@
-import * as z from 'zod'
-
-import { Match, Set } from 'wasp/entities'
-import { scoringPlayerSchema } from './validation'
+// biome-ignore lint/suspicious/noShadowRestrictedNames: Set is native to the app
+import type { Match, Set } from 'wasp/entities'
+import type { z } from 'zod'
+import type { scoringPlayerSchema } from './validation'
 
 type TennisPoint = '0' | '15' | '30' | '40' | 'A'
 
